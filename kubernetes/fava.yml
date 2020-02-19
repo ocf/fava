@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+spec:
+  selector:
+    app: fava
+  ports:
+    - port: 80
+      targetPort: 5000
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,16 +31,41 @@ spec:
             claimName: fava-pv-claim
       containers:
         - name: fava
-          image: "hub.docker.com/fava:version-1.14"
+          image: "yegle/fava:version-1.14"
           env:
           - name: BEANCOUNT_FILE
             value: "/opt/beancount/ocf-accounts.bean"
           volumeMounts:
             - mountPath: "/opt/beancount"
-              name: fava-pv-claim
+              name: fava-pv-beancountfile
           resources:
             limits:
               memory: 256Mi
               cpu: 1
           ports:
             - containerPort: 5000
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fava-pv-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: "managed-nfs-storage"  
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: virtual-host-ingress
+spec:
+  rules:
+    - host: fava.ocf.berkeley.edu
+      http:
+        paths: 
+          - backend:
+              serviceName: service
+              servicePort: 80  
