@@ -57,6 +57,7 @@ spec:
             - --listen=:8080
             - --upstream-url=http://localhost:5000
             - --resources=uri=/*|roles=ocfstaff
+            - --headers=Host=fava.dev-kubernetes.ocf.berkeley.edu
           env:
             - name: KEYCLOAK_SECRET
               valueFrom:
