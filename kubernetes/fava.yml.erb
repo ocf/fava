@@ -7,7 +7,7 @@ spec:
     app: fava
   ports:
     - port: 80
-      targetPort: 5000
+      targetPort: 8080
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -44,6 +44,39 @@ spec:
               cpu: 1
           ports:
             - containerPort: 5000
+        - name: auth
+          image: "keycloak/keycloak-gatekeeper:6.0.1"
+          args:
+            - --client-id=fava
+            - --client-secret=$(KEYCLOAK_SECRET)
+            - --encryption-key=$(ENCRYPTION_KEY)
+            - --redirection-url=https://fava.ocf.berkeley.edu/
+            - --discovery-url=https://auth.ocf.berkeley.edu/auth/realms/ocf
+            - --enable-default-deny=true
+            - --enable-session-cookies
+            - --listen=:8080
+            - --upstream-url=http://127.0.0.1:5000
+            - --resources=uri=/*|roles=ocfstaff
+          env:
+            - name: KEYCLOAK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-client
+                  key: secret
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-client
+                  key: encryption_key
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-client
+type: Opaque
+stringData:
+  secret: <%= keycloak_secret %>
+  encryption_key: <%= keycloak_encryption_key %>
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
