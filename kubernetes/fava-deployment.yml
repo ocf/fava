@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    app: fava
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fava
+  template:
+    metadata:
+      labels:
+        app: fava
+    spec:
+      volumes:
+        - name: fava-pv-beancountfile
+          persistentVolumeClaim:
+            claimName: fava-pv-claim
+      containers:
+        - name: fava
+          image: "hub.docker.com/fava:version-1.14"
+          env:
+          - name: BEANCOUNT_FILE
+            value: "/opt/beancount/ocf-accounts.bean"
+          volumeMounts:
+            - mountPath: "/opt/beancount"
+              name: fava-pv-claim
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 1
+          ports:
+            - containerPort: 5000
