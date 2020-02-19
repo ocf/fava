@@ -33,8 +33,8 @@ spec:
         - name: fava
           image: "yegle/fava:version-1.14"
           env:
-          - name: BEANCOUNT_FILE
-            value: "/opt/beancount/ocf-accounts.bean"
+            - name: BEANCOUNT_FILE
+              value: "/opt/beancount/ocf-accounts.bean"
           volumeMounts:
             - mountPath: "/opt/beancount"
               name: fava-pv-beancountfile
@@ -50,12 +50,12 @@ spec:
             - --client-id=fava
             - --client-secret=$(KEYCLOAK_SECRET)
             - --encryption-key=$(ENCRYPTION_KEY)
-            - --redirection-url=https://fava.ocf.berkeley.edu/
+            - --redirection-url=https://fava.dev-kubernetes.ocf.berkeley.edu/
             - --discovery-url=https://auth.ocf.berkeley.edu/auth/realms/ocf
             - --enable-default-deny=true
             - --enable-session-cookies
             - --listen=:8080
-            - --upstream-url=http://127.0.0.1:5000
+            - --upstream-url=http://localhost:5000
             - --resources=uri=/*|roles=ocfstaff
           env:
             - name: KEYCLOAK_SECRET
@@ -96,7 +96,7 @@ metadata:
   name: virtual-host-ingress
 spec:
   rules:
-    - host: fava.ocf.berkeley.edu
+    - host: fava.dev-kubernetes.ocf.berkeley.edu
       http:
         paths: 
           - backend:
