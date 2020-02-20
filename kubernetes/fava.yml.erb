@@ -106,18 +106,6 @@ stringData:
   secret: <%= keycloak_secret %>
   encryption_key: <%= keycloak_encryption_key %>
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: fava-pv-claim
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 2Gi
-  storageClassName: "managed-nfs-storage"  
----
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
