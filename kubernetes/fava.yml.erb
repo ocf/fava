@@ -26,24 +26,43 @@ spec:
         app: fava
     spec:
       volumes:
-        - name: fava-pv-beancountfile
-          persistentVolumeClaim:
-            claimName: fava-pv-claim
+        - name: beancount-git
+          emptyDir: {}
       containers:
         - name: fava
           image: "yegle/fava:version-1.14"
           env:
             - name: BEANCOUNT_FILE
-              value: "/opt/beancount/ocf-accounts.bean"
+              value: "/opt/git-sync/beancount/beancount/ledger.bean"
           volumeMounts:
-            - mountPath: "/opt/beancount"
-              name: fava-pv-beancountfile
+            - mountPath: "/opt/git-sync"
+              name: beancount-git
+              readOnly: true
           resources:
             limits:
               memory: 256Mi
               cpu: 1
           ports:
             - containerPort: 5000
+        - name: git-sync
+          image: "k8s.gcr.io/git-sync:v3.1.5"
+          env:
+            - name: GIT_SYNC_REPO
+              value: "https://github.com/ocf/beancount"
+            - name: GIT_SYNC_ROOT
+              value: "/opt/git-sync"
+            - name: GIT_SYNC_WAIT
+              value: "300"
+            - name: GIT_SYNC_USERNAME
+              value: "ocfbot"
+            - name: GIT_SYNC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: git-sync-pw
+                  key: ocfbot-git-pw
+          volumeMounts:
+            - mountPath: "/opt/git-sync"
+              name: beancount-git
         - name: auth
           image: "keycloak/keycloak-gatekeeper:6.0.1"
           args:
@@ -69,6 +88,14 @@ spec:
                 secretKeyRef:
                   name: keycloak-client
                   key: encryption_key
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-sync-pw
+type: Opaque
+stringData:
+  ocfbot-git-pw: <%= ocfbot_git_password %>
 ---
 apiVersion: v1
 kind: Secret
