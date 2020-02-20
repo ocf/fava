@@ -1,4 +1,6 @@
-Host [Fava](), a web interface for the text-file accounting program [beancount](), on Kubernetes.
+# Fava
+
+Host [Fava](https://github.com/beancount/fava), a web interface for the text-file accounting program [beancount](http://furius.ca/beancount/), on Kubernetes.
 
 There are two sidecar containers: one is Keycloak, since Fava by design does not do authentication.
 
