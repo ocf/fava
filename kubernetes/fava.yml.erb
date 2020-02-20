@@ -69,14 +69,14 @@ spec:
             - --client-id=fava
             - --client-secret=$(KEYCLOAK_SECRET)
             - --encryption-key=$(ENCRYPTION_KEY)
-            - --redirection-url=https://fava.dev-kubernetes.ocf.berkeley.edu/
+            - --redirection-url=https://fava.ocf.berkeley.edu/
             - --discovery-url=https://auth.ocf.berkeley.edu/auth/realms/ocf
             - --enable-default-deny=true
             - --enable-session-cookies
             - --listen=:8080
             - --upstream-url=http://localhost:5000
             - --resources=uri=/*|roles=ocfstaff
-            - --headers=Host=fava.dev-kubernetes.ocf.berkeley.edu
+            - --headers=Host=fava.ocf.berkeley.edu
           env:
             - name: KEYCLOAK_SECRET
               valueFrom:
@@ -112,7 +112,7 @@ metadata:
   name: virtual-host-ingress
 spec:
   rules:
-    - host: fava.dev-kubernetes.ocf.berkeley.edu
+    - host: fava.ocf.berkeley.edu
       http:
         paths: 
           - backend:
