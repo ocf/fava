@@ -33,7 +33,7 @@ spec:
           image: "yegle/fava:version-1.14"
           env:
             - name: BEANCOUNT_FILE
-              value: "/opt/git-sync/beancount/beancount/ledger.bean"
+              value: "/opt/git-sync/beancount/beancount/ledger.beancount"
           volumeMounts:
             - mountPath: "/opt/git-sync"
               name: beancount-git
