@@ -110,6 +110,8 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: virtual-host-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   rules:
     - host: fava.ocf.berkeley.edu
